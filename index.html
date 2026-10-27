@@ -36,18 +36,17 @@ html,body{min-height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--serif);font-size:16px;line-height:1.7;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px;
   display:flex;justify-content:center}
-.app{width:100%;max-width:440px;min-height:calc(100vh - 28px);min-height:calc(100dvh - 28px);display:flex;flex-direction:column;gap:12px}
+html{scroll-snap-type:y proximity;scroll-behavior:smooth}
+.app{width:100%;max-width:440px;display:flex;flex-direction:column;gap:12px}
+.stack{display:flex;flex-direction:column;gap:16px}
+.scrollcue{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:18px;color:var(--ink-soft);text-decoration:none;font-family:var(--sans);font-size:12px;letter-spacing:.08em}
+.scrollcue .arrow{font-size:18px;color:var(--olive);animation:cue 1.8s ease-in-out infinite}
+@keyframes cue{0%,100%{transform:translateY(0);opacity:.6}50%{transform:translateY(6px);opacity:1}}
 
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:var(--sans);font-size:13px;color:var(--ink-soft)}
 .dday{border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-variant-numeric:tabular-nums}
-.dots{display:flex;gap:6px}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--line);border:0;padding:0;cursor:pointer;transition:width .25s,background .25s}
-.dot[aria-current="true"]{width:22px;border-radius:4px;background:var(--olive)}
-.dot:disabled{cursor:default;opacity:.5}
 
-.viewport{flex:1 0 auto;display:flex;overflow:hidden;border-radius:6px;background:var(--card);border:1px solid var(--line);touch-action:pan-y}
-.track{display:flex;flex:1 0 auto;width:100%;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
-.page{flex:0 0 100%;min-width:0;padding:40px 30px 36px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px}
+.page{position:relative;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:6px;scroll-snap-align:start;scroll-margin-top:12px;min-height:calc(100svh - 32px);justify-content:center;padding:44px 30px 40px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px}
 
 h1,h2{font-weight:700;margin:0;text-wrap:balance;word-break:keep-all;letter-spacing:-.01em}
 h1{font-size:30px;font-weight:400;letter-spacing:.04em}
@@ -57,7 +56,7 @@ p{margin:0}
 .eyebrow{font-family:var(--sans);font-size:12px;letter-spacing:.18em;color:var(--olive)}
 
 /* 1. 초대 */
-.page.invite{justify-content:center;gap:28px;padding-block:40px}
+.page.invite{justify-content:center;gap:28px;padding-block:40px;min-height:calc(100svh - 72px)}
 .brand{display:grid;justify-items:center;gap:2px;color:var(--olive);font-family:var(--sans);letter-spacing:.16em;line-height:1.3}
 .brand .big{font-size:15px}
 .brand .and{font-family:var(--serif);font-style:italic;font-size:11px;letter-spacing:.08em;color:var(--ink-soft)}
@@ -86,10 +85,9 @@ p{margin:0}
 .maplink{margin-top:10px;justify-self:center;color:inherit;font-size:14px;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line)}
 .maplink:hover{text-decoration-color:currentColor}
 /* 테두리 장식: 카드 안쪽 이중선 + 모서리 */
-.viewport{position:relative}
-.viewport::before,.viewport::after{content:"";position:absolute;pointer-events:none;z-index:1}
-.viewport::before{inset:10px;border:1px solid var(--line)}
-.viewport::after{inset:14px;border:1px solid color-mix(in srgb,var(--olive) 45%,transparent);
+.page::before,.page::after{content:"";position:absolute;pointer-events:none;z-index:1}
+.page::before{inset:10px;border:1px solid var(--line)}
+.page::after{inset:14px;border:1px solid color-mix(in srgb,var(--olive) 45%,transparent);
   -webkit-mask:linear-gradient(#000 0 0) top left/22px 22px no-repeat,linear-gradient(#000 0 0) top right/22px 22px no-repeat,linear-gradient(#000 0 0) bottom left/22px 22px no-repeat,linear-gradient(#000 0 0) bottom right/22px 22px no-repeat;
   mask:linear-gradient(#000 0 0) top left/22px 22px no-repeat,linear-gradient(#000 0 0) top right/22px 22px no-repeat,linear-gradient(#000 0 0) bottom left/22px 22px no-repeat,linear-gradient(#000 0 0) bottom right/22px 22px no-repeat}
 .copy{margin-top:4px;font-family:var(--sans);font-size:12px;background:none;border:1px solid var(--line);color:var(--ink-soft);border-radius:999px;padding:2px 10px;cursor:pointer}
@@ -132,12 +130,9 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
 .dl-msg{font-family:var(--sans);font-size:12px;color:var(--ink-soft);min-height:1em;margin:-10px 0 0}
 .stub{font-family:var(--sans);font-size:12px;color:var(--ink-soft);border-top:1px dashed var(--line);padding-top:10px;width:100%;font-variant-numeric:tabular-nums}
 
-.nav{display:flex;gap:10px}
-.nav .btn{min-height:50px;font-size:15px}
-.nav .btn[hidden]{display:none}
 .hint{font-family:var(--sans);font-size:12px;color:var(--ink-soft);text-align:center}
 
-@media (prefers-reduced-motion: reduce){.track,.dot,.btn,.opt span,.act-head span{transition:none}}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}.scrollcue .arrow{animation:none}.btn,.opt span,.act-head span{transition:none}}
 /* 수요조사 장: 성함 칸이 늘어난 만큼 간격을 줄여 한 화면에 */
 #rsvp{gap:16px}
 #rsvp legend,#rsvp .q{margin-bottom:6px}
@@ -160,11 +155,9 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
 <main class="app">
   <div class="top">
     <span class="dday" id="dday">11월 9일</span>
-    <nav class="dots" id="dots" aria-label="페이지"></nav>
   </div>
 
-  <div class="viewport" id="viewport">
-    <div class="track" id="track">
+  <div class="stack" id="track">
 
       <!-- 1. 초대 -->
       <section class="page invite" aria-label="초대">
@@ -176,10 +169,11 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
           <span class="soft">오후 6시 30분 ~ 8시 30분</span>
           <span class="soft">별드림관 헬스장 옆 TLC</span>
         </div>
+        <a class="scrollcue" href="#program" aria-label="아래로 스크롤해서 더 보기"><span>아래로 스크롤</span><span class="arrow" aria-hidden="true">↓</span></a>
       </section>
 
       <!-- 2. 활동 -->
-      <section class="page" aria-label="활동 소개">
+      <section class="page" id="program" aria-label="활동 소개">
         <span class="eyebrow">PROGRAM</span>
         <h2>활동 소개</h2>
         <p class="soft" style="font-size:14px">카페 이름을 눌러 자세히 보세요.</p>
@@ -240,12 +234,12 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
           </div>
           <p class="err" id="err" role="alert"></p>
           <button class="btn" type="submit">제출</button>
-          <p class="note">참석 여부를 편하게 알려주세요.<br>참여를 선택하시면 다음 페이지에서<br>방문할 때 쓸 수 있는 작은 교환권을 드립니다.</p>
+          <p class="note">참석 여부를 편하게 알려주세요.<br>참여를 선택하시면 바로 아래에<br>방문할 때 쓸 수 있는 작은 교환권을 드립니다.</p>
         </form>
       </section>
 
       <!-- 5. 결과 -->
-      <section class="page result" id="result" aria-label="교환권">
+      <section class="page result" id="result" aria-label="교환권" hidden>
         <span class="eyebrow">THANK YOU</span>
         <h2 class="yes-msg">팝업에서 뵙겠습니다!</h2>
         <h2 class="no-msg">알려주셔서 감사합니다</h2>
@@ -257,14 +251,7 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
         <p class="dl-msg" id="dlMsg" role="status"></p>
       </section>
 
-    </div>
   </div>
-
-  <div class="nav">
-    <button class="btn ghost" type="button" id="prev">이전</button>
-    <button class="btn" type="button" id="next">다음</button>
-  </div>
-  <p class="hint">옆으로 밀어서 넘길 수도 있어요</p>
 </main>
 
 <div class="saveview" id="saveView" role="dialog" aria-modal="true" aria-labelledby="saveTitle" hidden>
@@ -278,50 +265,11 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
 </div>
 <script>
 (function(){
-  const track=document.getElementById('track');
-  const pages=[...track.children];
-  const dotsEl=document.getElementById('dots');
-  const prev=document.getElementById('prev'), next=document.getElementById('next');
-  const RESULT=pages.length-1, FORM=RESULT-1;
-  let idx=0, answered=null;
+  let answered=null;
 
   const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},
                set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},
                del(k){try{localStorage.removeItem(k)}catch(e){}}};
-
-  pages.forEach((p,i)=>{
-    const d=document.createElement('button');
-    d.className='dot';d.type='button';d.setAttribute('aria-label',(i+1)+'번째 장');
-    d.addEventListener('click',()=>go(i));
-    dotsEl.appendChild(d);
-  });
-  const dots=[...dotsEl.children];
-
-  function go(i){
-    if(i===RESULT && !answered) i=FORM;
-    idx=Math.max(0,Math.min(i,RESULT));
-    track.style.transform=`translateX(-${idx*100}%)`;
-    pages.forEach((p,j)=>p.inert = j!==idx);
-    dots.forEach((d,j)=>{d.setAttribute('aria-current',j===idx);d.disabled=(j===RESULT&&!answered)});
-    prev.hidden = idx===0;
-    next.hidden = idx>=FORM;
-  }
-  prev.onclick=()=>go(idx-1);
-  next.onclick=()=>go(idx+1);
-  document.addEventListener('keydown',e=>{
-    if(e.target.closest('input'))return;
-    if(e.key==='ArrowRight')go(idx+1);
-    if(e.key==='ArrowLeft')go(idx-1);
-  });
-
-  // swipe
-  let sx=null,sy=0;
-  const vp=document.getElementById('viewport');
-  vp.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'){sx=e.clientX;sy=e.clientY}});
-  vp.addEventListener('pointerup',e=>{
-    if(sx===null)return;const dx=e.clientX-sx,dy=e.clientY-sy;sx=null;
-    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))go(idx+(dx<0?1:-1));
-  });
 
   // D-day
   const ev=new Date('2026-11-09T18:30:00+09:00');
@@ -354,6 +302,7 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
   function showResult(a){
     answered=a;
     result.dataset.state=a.join;
+    result.hidden=false;
     if(a.join==='yes'){
       stub.textContent=`No. ${a.code} · ${a.name} · ${a.count}명 · 11월 9일 팝업 현장 사용`;
     }
@@ -375,7 +324,7 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
       const code=await r.json();
       const a={join:form.join.value,count:yes?n:0,code:String(code),name};
       store.set('popup-rsvp',a);
-      showResult(a);go(RESULT);
+      showResult(a);requestAnimationFrame(()=>result.scrollIntoView({behavior:'smooth',block:'start'}));
     }catch(ex){
       err.textContent='응답을 보내지 못했습니다. 인터넷 연결을 확인하고 다시 제출해 주세요.';
     }finally{submitBtn.disabled=false;submitBtn.textContent='제출'}
@@ -446,12 +395,11 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
     if(saved.name)nameEl.value=saved.name;
   }
   syncCount();
-  go(0);
 })();
 </script>
 
 <style>
-@media (max-height:780px){.eyebrow{display:none}.page{padding-top:30px;padding-bottom:28px;gap:16px}.hint{display:none}form{gap:20px}}
+@media (max-height:780px){.page{padding-top:34px;padding-bottom:32px;gap:16px}form{gap:20px}}
 @media (max-width:360px){.page{padding:34px 24px 30px;gap:16px}h1{font-size:27px}h2{font-size:20px}.act{padding:10px 12px}}</style>
 </body>
 </html>
