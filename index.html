@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>이든·북브런치 팝업 초대장</title>
+<meta name="description" content="이든카페·북브런치 카페 팝업 — 2026년 11월 9일 오후 6:30, 별드림관 헬스장 옆 TLC">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap">
+<style>
+/* Layout: 한 장씩 넘기는 모바일 카드 초대장 — 5장(초대 · 활동 · 장소 · 수요조사 · 교환권) */
+:root{
+  --bg:#f3eeea;
+  --card:#f8f4f0;
+  --ink:#5f5a54;
+  --ink-soft:#8c857d;
+  --olive:#8a9560;
+  --olive-ink:#ffffff;
+  --line:#d9d1c8;
+  --warn:#c4453a;
+  --serif:"Gowun Batang","Noto Serif KR","Nanum Myeongjo",serif;
+  --sans:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#22211d;--card:#2b2a25;--ink:#e6e0d8;--ink-soft:#aaa298;--olive:#a3ae78;--olive-ink:#1d1f15;--line:#45423b;--warn:#e7766b;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#22211d;--card:#2b2a25;--ink:#e6e0d8;--ink-soft:#aaa298;--olive:#a3ae78;--olive-ink:#1d1f15;--line:#45423b;--warn:#e7766b;color-scheme:dark}
+
+*{box-sizing:border-box}
+body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--serif);font-size:16px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px;
+  display:flex;justify-content:center}
+.app{width:100%;max-width:440px;min-height:calc(100vh - 28px);min-height:calc(100dvh - 28px);display:flex;flex-direction:column;gap:12px}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:var(--sans);font-size:13px;color:var(--ink-soft)}
+.dday{border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-variant-numeric:tabular-nums}
+.dots{display:flex;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--line);border:0;padding:0;cursor:pointer;transition:width .25s,background .25s}
+.dot[aria-current="true"]{width:22px;border-radius:4px;background:var(--olive)}
+.dot:disabled{cursor:default;opacity:.5}
+
+.viewport{flex:1 0 auto;display:flex;overflow:hidden;border-radius:6px;background:var(--card);border:1px solid var(--line);touch-action:pan-y}
+.track{display:flex;flex:1 0 auto;width:100%;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+.page{flex:0 0 100%;min-width:0;padding:40px 30px 36px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px}
+
+h1,h2{font-weight:700;margin:0;text-wrap:balance;word-break:keep-all;letter-spacing:-.01em}
+h1{font-size:30px;font-weight:400;letter-spacing:.04em}
+h2{font-size:22px}
+p{margin:0}
+.soft{color:var(--ink-soft)}
+.eyebrow{font-family:var(--sans);font-size:12px;letter-spacing:.18em;color:var(--olive)}
+
+/* 1. 초대 */
+.page.invite{justify-content:center;gap:28px;padding-block:40px}
+.brand{display:grid;justify-items:center;gap:2px;color:var(--olive);font-family:var(--sans);letter-spacing:.16em;line-height:1.3}
+.brand .big{font-size:15px}
+.brand .and{font-family:var(--serif);font-style:italic;font-size:11px;letter-spacing:.08em;color:var(--ink-soft)}
+.when{display:grid;gap:2px;font-size:15px}
+.rule{width:40px;height:1px;background:var(--line)}
+
+/* 2. 활동 */
+.acts{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;width:100%;min-width:0;text-align:left}
+.act{width:100%;max-width:100%;min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:6px;background:transparent;color:inherit;font:inherit;padding:12px 14px;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr);gap:4px;text-align:left}
+.act-head{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:17px}
+.act-head span{font-family:var(--sans);font-weight:400;font-size:20px;color:var(--olive);transition:transform .25s}
+.act[aria-expanded="true"] .act-head span{transform:rotate(45deg)}
+.act ul{margin:6px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.act li{font-family:var(--sans);font-size:12.5px;border-radius:999px;padding:2px 9px;max-width:100%;background:color-mix(in srgb,var(--olive) 16%,transparent);color:var(--ink)}
+.act .sum{font-size:14px;color:var(--ink-soft)}
+
+/* 3. 장소 */
+.info{width:100%;display:grid;gap:0;text-align:left;border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:56px 1fr;gap:12px;padding:12px 2px;border-bottom:1px solid var(--line)}
+.row dt{font-family:var(--sans);font-size:13px;color:var(--ink-soft);padding-top:2px}
+.row dd{margin:0;min-width:0}
+.place-photo{width:100%;max-width:100%;border-radius:6px;overflow:hidden;aspect-ratio:16/10}
+.place-photo img{display:block;width:100%;height:100%;object-fit:cover}
+.place{display:grid;gap:2px}
+.place strong{font-size:18px}
+.maplink{margin-top:10px;justify-self:center;color:inherit;font-size:14px;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line)}
+.maplink:hover{text-decoration-color:currentColor}
+/* 테두리 장식: 카드 안쪽 이중선 + 모서리 */
+.viewport{position:relative}
+.viewport::before,.viewport::after{content:"";position:absolute;pointer-events:none;z-index:1}
+.viewport::before{inset:10px;border:1px solid var(--line)}
+.viewport::after{inset:14px;border:1px solid color-mix(in srgb,var(--olive) 45%,transparent);
+  -webkit-mask:linear-gradient(#000 0 0) top left/22px 22px no-repeat,linear-gradient(#000 0 0) top right/22px 22px no-repeat,linear-gradient(#000 0 0) bottom left/22px 22px no-repeat,linear-gradient(#000 0 0) bottom right/22px 22px no-repeat;
+  mask:linear-gradient(#000 0 0) top left/22px 22px no-repeat,linear-gradient(#000 0 0) top right/22px 22px no-repeat,linear-gradient(#000 0 0) bottom left/22px 22px no-repeat,linear-gradient(#000 0 0) bottom right/22px 22px no-repeat}
+.copy{margin-top:4px;font-family:var(--sans);font-size:12px;background:none;border:1px solid var(--line);color:var(--ink-soft);border-radius:999px;padding:2px 10px;cursor:pointer}
+
+.btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:54px;border-radius:999px;border:0;background:var(--olive);color:var(--olive-ink);font-family:var(--serif);font-weight:700;font-size:16px;text-decoration:none;cursor:pointer;transition:filter .2s,transform .1s}
+.btn:hover{filter:brightness(1.05)}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+:focus-visible{outline:2px solid var(--olive);outline-offset:3px}
+
+/* 4. 수요조사 */
+form{width:100%;display:grid;gap:26px;text-align:left}
+fieldset{border:0;margin:0;padding:0;display:grid;gap:10px}
+legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
+.req{color:var(--warn);font-size:12px;font-family:var(--sans);margin-left:4px;font-weight:400}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{position:relative}
+.opt input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.opt span{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border:1px solid var(--line);border-radius:6px;transition:all .2s}
+.opt input:checked + span{border-color:var(--olive);background:color-mix(in srgb,var(--olive) 14%,transparent);font-weight:700}
+.opt input:focus-visible + span{outline:2px solid var(--olive);outline-offset:2px}
+.stepper{display:flex;align-items:center;gap:10px}
+.stepper button{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:20px;cursor:pointer;flex:none}
+.stepper input{flex:1;min-width:0;height:48px;border:1px solid var(--olive);border-radius:6px;background:transparent;color:var(--ink);text-align:center;font:inherit;font-size:18px;font-variant-numeric:tabular-nums}
+.namefield input{width:100%;height:48px;border:1px solid var(--olive);border-radius:6px;background:transparent;color:var(--ink);font:inherit;font-size:16px;padding:0 14px}
+.namefield input::placeholder{color:var(--ink-soft);opacity:.7}
+.hint-sm{font-family:var(--sans);font-size:12px;color:var(--ink-soft);margin:6px 0 0}
+.btn:disabled{opacity:.6;cursor:wait}
+.count-wrap{transition:opacity .25s}
+.count-wrap[aria-disabled="true"]{opacity:.4;pointer-events:none}
+.err{color:var(--warn);font-family:var(--sans);font-size:13px;min-height:1.2em;margin:-14px 0 0}
+.note{font-size:14px;color:var(--ink-soft);text-align:center;border:1px solid var(--line);padding:14px 12px;line-height:1.75}
+
+/* 5. 결과 */
+.coupon{width:92%;border-radius:4px;overflow:hidden;box-shadow:0 10px 28px -14px rgba(60,50,30,.45);transform:rotate(-1.5deg)}
+.coupon img{display:block;width:100%;height:auto}
+.result[data-state="no"] .coupon{display:none}
+.result[data-state="yes"] .no-msg{display:none}
+.result:not([data-state="yes"]) .yes-msg{display:none}
+.dl-msg{font-family:var(--sans);font-size:12px;color:var(--ink-soft);min-height:1em;margin:-10px 0 0}
+.stub{font-family:var(--sans);font-size:12px;color:var(--ink-soft);border-top:1px dashed var(--line);padding-top:10px;width:100%;font-variant-numeric:tabular-nums}
+
+.nav{display:flex;gap:10px}
+.nav .btn{min-height:50px;font-size:15px}
+.nav .btn[hidden]{display:none}
+.hint{font-family:var(--sans);font-size:12px;color:var(--ink-soft);text-align:center}
+
+@media (prefers-reduced-motion: reduce){.track,.dot,.btn,.opt span,.act-head span{transition:none}}
+/* 수요조사 장: 성함 칸이 늘어난 만큼 간격을 줄여 한 화면에 */
+#rsvp{gap:16px}
+#rsvp legend,#rsvp .q{margin-bottom:6px}
+#rsvp .opt span,#rsvp .namefield input,#rsvp .stepper input{min-height:44px;height:44px}
+#rsvp .stepper button{width:40px;height:40px}
+#rsvp .err{margin:-8px 0 -4px;min-height:0}
+#rsvp .err:empty{display:none}
+#rsvp .btn{min-height:48px}
+#rsvp .note{font-size:13px;padding:10px 12px;line-height:1.6}
+</style>
+</head>
+<body>
+<main class="app">
+  <div class="top">
+    <span class="dday" id="dday">11월 9일</span>
+    <nav class="dots" id="dots" aria-label="페이지"></nav>
+  </div>
+
+  <div class="viewport" id="viewport">
+    <div class="track" id="track">
+
+      <!-- 1. 초대 -->
+      <section class="page invite" aria-label="초대">
+        <div class="brand"><span class="big">EDEN</span><span class="and">and</span><span class="big">BOOK BRUNCH &amp; BOOKSTORE</span></div>
+        <h1>팝업 초대장</h1>
+        <div class="rule"></div>
+        <div class="when">
+          <span>2026년 11월 9일 (월)</span>
+          <span class="soft">오후 6시 30분 ~ 8시 30분</span>
+          <span class="soft">별드림관 헬스장 옆 TLC</span>
+        </div>
+      </section>
+
+      <!-- 2. 활동 -->
+      <section class="page" aria-label="활동 소개">
+        <span class="eyebrow">PROGRAM</span>
+        <h2>활동 소개</h2>
+        <p class="soft" style="font-size:14px">카페 이름을 눌러 자세히 보세요.</p>
+        <div class="acts">
+          <button class="act" type="button" aria-expanded="true">
+            <span class="act-head">이든 카페 <span aria-hidden="true">+</span></span>
+            <span class="sum">카페 소개부터 시식회까지</span>
+            <ul>
+              <li>온라인 사이트 소개</li><li>전체 팝업 폼보드 설명</li><li>건강빵 시식회</li><li>각종 활동</li>
+            </ul>
+          </button>
+          <button class="act" type="button" aria-expanded="false">
+            <span class="act-head">북브런치 카페 <span aria-hidden="true">+</span></span>
+            <span class="sum">운영 방식과 메뉴 이야기</span>
+            <ul hidden>
+              <li>운영 방법 설명</li><li>메뉴 소개</li><li>웹사이트 설명</li>
+            </ul>
+          </button>
+        </div>
+      </section>
+
+      <!-- 3. 장소 -->
+      <section class="page" aria-label="오시는 길">
+        <span class="eyebrow">WHERE &amp; WHEN</span>
+        <h2>오시는 길</h2>
+        <div class="place-photo"><img alt="TLC 건물 입구 — 통유리창과 검은 문틀" src="assets/place.jpg" width="1200" height="660"></div>
+        <div class="place">
+          <strong>별드림관 헬스장 옆 TLC</strong>
+          <span class="soft">11월 9일 (월) · 오후 6:30 ~ 8:30</span>
+          <a class="maplink" id="mapLink" href="https://www.google.com/maps/search/?api=1&query=%EB%B3%84%EB%AC%B4%EB%A6%AC%ED%95%99%EA%B5%90" target="_blank" rel="noopener">지도 보기 →</a>
+        </div>
+      </section>
+
+      <!-- 4. 수요조사 -->
+      <section class="page" aria-label="수요조사">
+        <span class="eyebrow">RSVP</span>
+        <h2>수요조사</h2>
+        <form id="rsvp" novalidate>
+          <div class="namefield">
+            <label class="q" for="name" style="display:block">성함<span class="req">*필수</span></label>
+            <input id="name" name="name" type="text" autocomplete="name" maxlength="40" placeholder="성함을 적어 주세요">
+            <p class="hint-sm">현장에서 성함으로 교환권을 확인합니다.</p>
+          </div>
+          <fieldset>
+            <legend>팝업에 참여하시나요?<span class="req">*필수</span></legend>
+            <div class="opts">
+              <label class="opt"><input type="radio" name="join" value="yes" id="joinYes"><span>예</span></label>
+              <label class="opt"><input type="radio" name="join" value="no" id="joinNo"><span>아니오</span></label>
+            </div>
+          </fieldset>
+          <div class="count-wrap" id="countWrap" aria-disabled="true">
+            <label class="q" for="count" style="display:block">몇 분이서 오시나요?</label>
+            <div class="stepper">
+              <button type="button" id="minus" aria-label="한 명 줄이기">−</button>
+              <input id="count" name="count" type="number" inputmode="numeric" min="1" max="20" value="1">
+              <button type="button" id="plus" aria-label="한 명 늘리기">+</button>
+            </div>
+          </div>
+          <p class="err" id="err" role="alert"></p>
+          <button class="btn" type="submit">제출</button>
+          <p class="note">참석 여부를 편하게 알려주세요.<br>참여를 선택하시면 다음 페이지에서<br>방문할 때 쓸 수 있는 작은 교환권을 드립니다.</p>
+        </form>
+      </section>
+
+      <!-- 5. 결과 -->
+      <section class="page result" id="result" aria-label="교환권">
+        <span class="eyebrow">THANK YOU</span>
+        <h2 class="yes-msg">팝업에서 뵙겠습니다!</h2>
+        <h2 class="no-msg">알려주셔서 감사합니다</h2>
+        <div class="coupon"><img alt="FREE CIABATTA 교환권" src="assets/coupon.jpg" width="275" height="137"></div>
+        <p class="yes-msg soft">팝업 현장에서 이 화면을 보여주시면<br>치아바타로 교환해 드립니다.</p>
+        <p class="no-msg soft">다음 기회에 꼭 뵐게요.<br>마음이 바뀌면 언제든 다시 응답해 주세요.</p>
+        <div class="stub yes-msg" id="stub"></div>
+        <button class="btn ghost yes-msg" type="button" id="dl" hidden>교환권 이미지 저장</button>
+        <p class="dl-msg" id="dlMsg" role="status"></p>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="btn ghost" type="button" id="prev">이전</button>
+    <button class="btn" type="button" id="next">다음</button>
+  </div>
+  <p class="hint">옆으로 밀어서 넘길 수도 있어요</p>
+</main>
+
+<script>
+(function(){
+  const track=document.getElementById('track');
+  const pages=[...track.children];
+  const dotsEl=document.getElementById('dots');
+  const prev=document.getElementById('prev'), next=document.getElementById('next');
+  const RESULT=pages.length-1, FORM=RESULT-1;
+  let idx=0, answered=null;
+
+  const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},
+               set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},
+               del(k){try{localStorage.removeItem(k)}catch(e){}}};
+
+  pages.forEach((p,i)=>{
+    const d=document.createElement('button');
+    d.className='dot';d.type='button';d.setAttribute('aria-label',(i+1)+'번째 장');
+    d.addEventListener('click',()=>go(i));
+    dotsEl.appendChild(d);
+  });
+  const dots=[...dotsEl.children];
+
+  function go(i){
+    if(i===RESULT && !answered) i=FORM;
+    idx=Math.max(0,Math.min(i,RESULT));
+    track.style.transform=`translateX(-${idx*100}%)`;
+    pages.forEach((p,j)=>p.inert = j!==idx);
+    dots.forEach((d,j)=>{d.setAttribute('aria-current',j===idx);d.disabled=(j===RESULT&&!answered)});
+    prev.hidden = idx===0;
+    next.hidden = idx>=FORM;
+  }
+  prev.onclick=()=>go(idx-1);
+  next.onclick=()=>go(idx+1);
+  document.addEventListener('keydown',e=>{
+    if(e.target.closest('input'))return;
+    if(e.key==='ArrowRight')go(idx+1);
+    if(e.key==='ArrowLeft')go(idx-1);
+  });
+
+  // swipe
+  let sx=null,sy=0;
+  const vp=document.getElementById('viewport');
+  vp.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'){sx=e.clientX;sy=e.clientY}});
+  vp.addEventListener('pointerup',e=>{
+    if(sx===null)return;const dx=e.clientX-sx,dy=e.clientY-sy;sx=null;
+    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))go(idx+(dx<0?1:-1));
+  });
+
+  // D-day
+  const ev=new Date('2026-11-09T18:30:00+09:00');
+  const days=Math.ceil((ev-new Date())/864e5);
+  document.getElementById('dday').textContent = days>0?`D-${days} · 11월 9일`:(days===0?'오늘 팝업!':'11월 9일 팝업');
+
+  // 활동 아코디언
+  document.querySelectorAll('.act').forEach(b=>b.addEventListener('click',()=>{
+    const open=b.getAttribute('aria-expanded')!=='true';
+    b.setAttribute('aria-expanded',open);
+    b.querySelector('ul').hidden=!open;
+  }));
+
+  // 폼
+  const form=document.getElementById('rsvp'), err=document.getElementById('err');
+  const count=document.getElementById('count'), wrap=document.getElementById('countWrap');
+  function syncCount(){
+    const yes=form.join.value==='yes';
+    wrap.setAttribute('aria-disabled',!yes);
+    count.disabled=!yes;
+    if(form.join.value)err.textContent='';
+  }
+  form.addEventListener('change',syncCount);
+  document.getElementById('minus').onclick=()=>{count.value=Math.max(1,(+count.value||1)-1)};
+  document.getElementById('plus').onclick=()=>{count.value=Math.min(20,(+count.value||0)+1)};
+
+  const result=document.getElementById('result'), stub=document.getElementById('stub');
+  const SB_URL='https://qdkvclpapsasedrvhkvx.supabase.co', SB_KEY='sb_publishable_ceZ2sE7WKbkcod54qVl5aA_HR4bq4iQ';
+  const nameEl=document.getElementById('name'), submitBtn=form.querySelector('button[type=submit]');
+  function showResult(a){
+    answered=a;
+    result.dataset.state=a.join;
+    if(a.join==='yes'){
+      stub.textContent=`No. ${a.code} · ${a.name} · ${a.count}명 · 11월 9일 팝업 현장 사용`;
+    }
+  }
+  form.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const name=nameEl.value.trim();
+    if(!name){err.textContent='성함을 적어 주세요.';nameEl.focus();return}
+    if(!form.join.value){err.textContent='참여 여부를 선택해 주세요.';return}
+    const yes=form.join.value==='yes';
+    const n=parseInt(count.value,10);
+    if(yes&&(!n||n<1||n>20)){err.textContent='인원은 1명에서 20명 사이로 적어 주세요.';return}
+    err.textContent='';submitBtn.disabled=true;submitBtn.textContent='보내는 중…';
+    try{
+      const r=await fetch(SB_URL+'/rest/v1/rpc/popup_submit_rsvp',{method:'POST',
+        headers:{'apikey':SB_KEY,'Content-Type':'application/json'},
+        body:JSON.stringify({p_name:name,p_attending:yes,p_party:yes?n:null})});
+      if(!r.ok)throw new Error('http '+r.status);
+      const code=await r.json();
+      const a={join:form.join.value,count:yes?n:0,code:String(code),name};
+      store.set('popup-rsvp',a);
+      showResult(a);go(RESULT);
+    }catch(ex){
+      err.textContent='응답을 보내지 못했습니다. 인터넷 연결을 확인하고 다시 제출해 주세요.';
+    }finally{submitBtn.disabled=false;submitBtn.textContent='제출'}
+  });
+  // 교환권 이미지 저장
+  const dl=document.getElementById('dl'), dlMsg=document.getElementById('dlMsg');
+  dl.hidden=false;
+  function couponPng(){
+    return new Promise((res,rej)=>{
+      const img=result.querySelector('.coupon img');
+      const W=img.naturalWidth*3, H=img.naturalHeight*3, pad=60, foot=150;
+      const c=document.createElement('canvas'); c.width=W+pad*2; c.height=H+pad*2+foot;
+      const x=c.getContext('2d');
+      x.fillStyle='#f8f4f0'; x.fillRect(0,0,c.width,c.height);
+      x.strokeStyle='#d9d1c8'; x.lineWidth=3; x.strokeRect(20,20,c.width-40,c.height-40);
+      x.drawImage(img,pad,pad,W,H);
+      x.fillStyle='#5f5a54'; x.textAlign='center';
+      x.font='700 40px "Gowun Batang", serif';
+      x.fillText('이든 · 북브런치 팝업 교환권',c.width/2,pad+H+70);
+      x.fillStyle='#8c857d'; x.font='28px "Gowun Dodum", sans-serif';
+      x.fillText(stub.textContent,c.width/2,pad+H+120);
+      c.toBlob(b=>b?res(b):rej(new Error('blob')),'image/png');
+    });
+  }
+  dl.onclick=async()=>{
+    if(!answered||answered.join!=='yes')return;
+    dlMsg.textContent='';
+    try{
+      try{await document.fonts.ready}catch(e){}
+      const blob=await couponPng();
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');a.href=url;a.download=`popup-coupon-${answered.code}.png`;
+      document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),4000);
+      dlMsg.textContent='저장이 안 되면 이 화면을 캡처해 주세요.';
+    }catch(e){
+      dlMsg.textContent='저장하지 못했습니다. 이 화면을 캡처해 주세요.';
+    }
+  };
+
+  const saved=store.get('popup-rsvp');
+  if(saved&&saved.join&&saved.name){
+    showResult(saved);
+    form.querySelector(`input[value="${saved.join}"]`).checked=true;
+    if(saved.count)count.value=saved.count;
+    if(saved.name)nameEl.value=saved.name;
+  }
+  syncCount();
+  go(0);
+})();
+</script>
+
+<style>
+@media (max-height:780px){.eyebrow{display:none}.page{padding-top:30px;padding-bottom:28px;gap:16px}.hint{display:none}form{gap:20px}}
+@media (max-width:360px){.page{padding:34px 24px 30px;gap:16px}h1{font-size:27px}h2{font-size:20px}.act{padding:10px 12px}}</style>
+</body>
+</html>
