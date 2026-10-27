@@ -147,6 +147,13 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
 #rsvp .err:empty{display:none}
 #rsvp .btn{min-height:48px}
 #rsvp .note{font-size:13px;padding:10px 12px;line-height:1.6}
+.saveview{position:fixed;inset:0;z-index:50;background:rgba(20,18,14,.72);display:flex;align-items:center;justify-content:center;
+  padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.savebox{width:100%;max-width:400px;max-height:100%;overflow:auto;background:var(--card);border-radius:8px;padding:18px;display:grid;gap:12px;text-align:center}
+.savetitle{font-weight:700;margin:0}
+.savebox img{width:100%;height:auto;border:1px solid var(--line);border-radius:4px;-webkit-touch-callout:default;user-select:auto}
+.savehelp{font-family:var(--sans);font-size:13.5px;color:var(--ink);margin:0;line-height:1.6;word-break:keep-all}
+.savebox .btn{min-height:46px}
 </style>
 </head>
 <body>
@@ -260,6 +267,15 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
   <p class="hint">옆으로 밀어서 넘길 수도 있어요</p>
 </main>
 
+<div class="saveview" id="saveView" role="dialog" aria-modal="true" aria-labelledby="saveTitle" hidden>
+  <div class="savebox">
+    <p class="savetitle" id="saveTitle">교환권 이미지</p>
+    <img id="saveImg" alt="팝업 교환권 이미지">
+    <p class="savehelp"><b>이미지를 길게 눌러</b> &lsquo;사진에 저장&rsquo; 또는 &lsquo;이미지 다운로드&rsquo;를 누르면 갤러리에 저장됩니다.</p>
+    <button class="btn" type="button" id="saveShare" hidden>공유 메뉴에서 저장하기</button>
+    <button class="btn ghost" type="button" id="saveClose">닫기</button>
+  </div>
+</div>
 <script>
 (function(){
   const track=document.getElementById('track');
@@ -384,21 +400,43 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
       c.toBlob(b=>b?res(b):rej(new Error('blob')),'image/png');
     });
   }
+  // 휴대폰: 이미지를 크게 띄워 길게 눌러 '사진에 저장' + (지원되면) 공유 시트의 '이미지 저장'
+  // 컴퓨터: 파일로 다운로드
+  const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Macintosh/.test(navigator.userAgent));
+  const sv=document.getElementById('saveView'), svImg=document.getElementById('saveImg'), svShare=document.getElementById('saveShare');
+  let couponFile=null;
+  function blobToDataURL(b){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(b)})}
   dl.onclick=async()=>{
     if(!answered||answered.join!=='yes')return;
     dlMsg.textContent='';
     try{
       try{await document.fonts.ready}catch(e){}
       const blob=await couponPng();
+      const fname=`popup-coupon-${answered.code}.png`;
+      if(isMobile){
+        couponFile=new File([blob],fname,{type:'image/png'});
+        svImg.src=await blobToDataURL(blob);
+        let canShare=false;try{canShare=!!(navigator.canShare&&navigator.canShare({files:[couponFile]}))}catch(e){}
+        svShare.hidden=!canShare;
+        sv.hidden=false;document.body.style.overflow='hidden';
+        return;
+      }
       const url=URL.createObjectURL(blob);
-      const a=document.createElement('a');a.href=url;a.download=`popup-coupon-${answered.code}.png`;
+      const a=document.createElement('a');a.href=url;a.download=fname;
       document.body.appendChild(a);a.click();a.remove();
       setTimeout(()=>URL.revokeObjectURL(url),4000);
-      dlMsg.textContent='저장이 안 되면 이 화면을 캡처해 주세요.';
     }catch(e){
-      dlMsg.textContent='저장하지 못했습니다. 이 화면을 캡처해 주세요.';
+      dlMsg.textContent='이미지를 만들지 못했습니다. 이 화면을 캡처해 주세요.';
     }
   };
+  svShare.onclick=async()=>{
+    if(!couponFile)return;
+    try{await navigator.share({files:[couponFile]})}catch(e){/* 취소하면 그대로 둠 */}
+  };
+  function closeSave(){sv.hidden=true;document.body.style.overflow=''}
+  document.getElementById('saveClose').onclick=closeSave;
+  sv.addEventListener('click',e=>{if(e.target===sv)closeSave()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!sv.hidden)closeSave()});
 
   const saved=store.get('popup-rsvp');
   if(saved&&saved.join&&saved.name){
