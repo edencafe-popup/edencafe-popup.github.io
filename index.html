@@ -45,9 +45,10 @@ body{background:var(--bg);color:var(--ink);font-family:var(--serif);font-size:16
 .dot[aria-current="true"]{width:22px;border-radius:4px;background:var(--olive)}
 .dot:disabled{cursor:default;opacity:.5}
 
-.viewport{flex:1 0 auto;display:flex;overflow:hidden;border-radius:6px;background:var(--card);border:1px solid var(--line);touch-action:pan-y}
-.track{display:flex;flex:1 0 auto;width:100%;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
-.page{flex:0 0 100%;min-width:0;padding:40px 30px 36px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px}
+.viewport{flex:1 0 auto;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-radius:6px;background:var(--card);border:1px solid var(--line)}
+.viewport::-webkit-scrollbar{display:none}
+.track{display:flex;flex:1 0 100%;min-width:100%}
+.page{position:relative;flex:0 0 100%;min-width:0;scroll-snap-align:start;scroll-snap-stop:always;padding:40px 30px 36px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px}
 
 h1,h2{font-weight:700;margin:0;text-wrap:balance;word-break:keep-all;letter-spacing:-.01em}
 h1{font-size:30px;font-weight:400;letter-spacing:.04em}
@@ -86,10 +87,9 @@ p{margin:0}
 .maplink{margin-top:10px;justify-self:center;color:inherit;font-size:14px;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line)}
 .maplink:hover{text-decoration-color:currentColor}
 /* 테두리 장식: 카드 안쪽 이중선 + 모서리 */
-.viewport{position:relative}
-.viewport::before,.viewport::after{content:"";position:absolute;pointer-events:none;z-index:1}
-.viewport::before{inset:10px;border:1px solid var(--line)}
-.viewport::after{inset:14px;border:1px solid color-mix(in srgb,var(--olive) 45%,transparent);
+.page::before,.page::after{content:"";position:absolute;pointer-events:none;z-index:1}
+.page::before{inset:10px;border:1px solid var(--line)}
+.page::after{inset:14px;border:1px solid color-mix(in srgb,var(--olive) 45%,transparent);
   -webkit-mask:linear-gradient(#000 0 0) top left/22px 22px no-repeat,linear-gradient(#000 0 0) top right/22px 22px no-repeat,linear-gradient(#000 0 0) bottom left/22px 22px no-repeat,linear-gradient(#000 0 0) bottom right/22px 22px no-repeat;
   mask:linear-gradient(#000 0 0) top left/22px 22px no-repeat,linear-gradient(#000 0 0) top right/22px 22px no-repeat,linear-gradient(#000 0 0) bottom left/22px 22px no-repeat,linear-gradient(#000 0 0) bottom right/22px 22px no-repeat}
 .copy{margin-top:4px;font-family:var(--sans);font-size:12px;background:none;border:1px solid var(--line);color:var(--ink-soft);border-radius:999px;padding:2px 10px;cursor:pointer}
@@ -132,12 +132,12 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
 .dl-msg{font-family:var(--sans);font-size:12px;color:var(--ink-soft);min-height:1em;margin:-10px 0 0}
 .stub{font-family:var(--sans);font-size:12px;color:var(--ink-soft);border-top:1px dashed var(--line);padding-top:10px;width:100%;font-variant-numeric:tabular-nums}
 
-.nav{display:flex;gap:10px}
-.nav .btn{min-height:50px;font-size:15px}
-.nav .btn[hidden]{display:none}
-.hint{font-family:var(--sans);font-size:12px;color:var(--ink-soft);text-align:center}
+.hint{display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--sans);font-size:12.5px;color:var(--ink-soft);text-align:center;transition:opacity .4s}
+.hint .arr{color:var(--olive);display:inline-block;animation:nudge 1.6s ease-in-out infinite}
+.hint.done{opacity:0}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
 
-@media (prefers-reduced-motion: reduce){.track,.dot,.btn,.opt span,.act-head span{transition:none}}
+@media (prefers-reduced-motion: reduce){.hint .arr{animation:none}.dot,.btn,.opt span,.act-head span{transition:none}}
 /* 수요조사 장: 성함 칸이 늘어난 만큼 간격을 줄여 한 화면에 */
 #rsvp{gap:16px}
 #rsvp legend,#rsvp .q{margin-bottom:6px}
@@ -245,7 +245,7 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
       </section>
 
       <!-- 5. 결과 -->
-      <section class="page result" id="result" aria-label="교환권">
+      <section class="page result" id="result" aria-label="교환권" hidden>
         <span class="eyebrow">THANK YOU</span>
         <h2 class="yes-msg">팝업에서 뵙겠습니다!</h2>
         <h2 class="no-msg">알려주셔서 감사합니다</h2>
@@ -260,11 +260,7 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
     </div>
   </div>
 
-  <div class="nav">
-    <button class="btn ghost" type="button" id="prev">이전</button>
-    <button class="btn" type="button" id="next">다음</button>
-  </div>
-  <p class="hint">옆으로 밀어서 넘길 수도 있어요</p>
+  <p class="hint" id="hint">옆으로 밀어서 넘겨 보세요 <span class="arr" aria-hidden="true">→</span></p>
 </main>
 
 <div class="saveview" id="saveView" role="dialog" aria-modal="true" aria-labelledby="saveTitle" hidden>
@@ -281,7 +277,6 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
   const track=document.getElementById('track');
   const pages=[...track.children];
   const dotsEl=document.getElementById('dots');
-  const prev=document.getElementById('prev'), next=document.getElementById('next');
   const RESULT=pages.length-1, FORM=RESULT-1;
   let idx=0, answered=null;
 
@@ -297,30 +292,26 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
   });
   const dots=[...dotsEl.children];
 
+  const vp=document.getElementById('viewport'), hint=document.getElementById('hint');
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function go(i){
     if(i===RESULT && !answered) i=FORM;
-    idx=Math.max(0,Math.min(i,RESULT));
-    track.style.transform=`translateX(-${idx*100}%)`;
-    pages.forEach((p,j)=>p.inert = j!==idx);
-    dots.forEach((d,j)=>{d.setAttribute('aria-current',j===idx);d.disabled=(j===RESULT&&!answered)});
-    prev.hidden = idx===0;
-    next.hidden = idx>=FORM;
+    i=Math.max(0,Math.min(i,answered?RESULT:FORM));
+    vp.scrollTo({left:i*vp.clientWidth,behavior:reduce?'auto':'smooth'});
   }
-  prev.onclick=()=>go(idx-1);
-  next.onclick=()=>go(idx+1);
+  function sync(){
+    const i=Math.round(vp.scrollLeft/Math.max(1,vp.clientWidth));
+    if(i!==idx){idx=i;}
+    dots.forEach((d,j)=>{d.setAttribute('aria-current',j===idx);d.disabled=(j===RESULT&&!answered)});
+    if(idx>0)hint.classList.add('done');
+  }
+  let raf=0;
+  vp.addEventListener('scroll',()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(sync)},{passive:true});
+  window.addEventListener('resize',()=>{vp.scrollLeft=idx*vp.clientWidth});
   document.addEventListener('keydown',e=>{
-    if(e.target.closest('input'))return;
+    if(e.target.closest('input,button'))return;
     if(e.key==='ArrowRight')go(idx+1);
     if(e.key==='ArrowLeft')go(idx-1);
-  });
-
-  // swipe
-  let sx=null,sy=0;
-  const vp=document.getElementById('viewport');
-  vp.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'){sx=e.clientX;sy=e.clientY}});
-  vp.addEventListener('pointerup',e=>{
-    if(sx===null)return;const dx=e.clientX-sx,dy=e.clientY-sy;sx=null;
-    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))go(idx+(dx<0?1:-1));
   });
 
   // D-day
@@ -354,6 +345,7 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
   function showResult(a){
     answered=a;
     result.dataset.state=a.join;
+    result.hidden=false;
     if(a.join==='yes'){
       stub.textContent=`No. ${a.code} · ${a.name} · ${a.count}명 · 11월 9일 팝업 현장 사용`;
     }
@@ -375,7 +367,7 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
       const code=await r.json();
       const a={join:form.join.value,count:yes?n:0,code:String(code),name};
       store.set('popup-rsvp',a);
-      showResult(a);go(RESULT);
+      showResult(a);requestAnimationFrame(()=>{go(RESULT);sync()});
     }catch(ex){
       err.textContent='응답을 보내지 못했습니다. 인터넷 연결을 확인하고 다시 제출해 주세요.';
     }finally{submitBtn.disabled=false;submitBtn.textContent='제출'}
@@ -446,12 +438,13 @@ legend,.q{font-weight:700;font-size:16px;padding:0;margin-bottom:10px}
     if(saved.name)nameEl.value=saved.name;
   }
   syncCount();
-  go(0);
+  sync();
 })();
 </script>
 
 <style>
-@media (max-height:780px){.eyebrow{display:none}.page{padding-top:30px;padding-bottom:28px;gap:16px}.hint{display:none}form{gap:20px}}
+@media (max-height:780px){.eyebrow{display:none}.page{padding-top:30px;padding-bottom:28px;gap:16px}form{gap:20px}}
+@media (max-height:700px){.page{padding-top:26px;padding-bottom:24px;gap:14px}#rsvp{gap:13px}.app{gap:10px}}
 @media (max-width:360px){.page{padding:34px 24px 30px;gap:16px}h1{font-size:27px}h2{font-size:20px}.act{padding:10px 12px}}</style>
 </body>
 </html>
