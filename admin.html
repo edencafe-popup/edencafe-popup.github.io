@@ -68,12 +68,12 @@ input{width:100%;height:48px;border:1px solid var(--olive);border-radius:6px;bac
   <section id="app" hidden>
     <div class="wrap">
       <div class="card stats">
-        <div class="stat"><b id="sAttend">0</b><span>참석 응답</span></div>
-        <div class="stat"><b id="sPeople">0</b><span>오실 인원</span></div>
+        <div class="stat"><b id="sAttend">0</b><span>참석 신청</span></div>
+        <div class="stat"><b id="sPeople">0</b><span>교환 대기</span></div>
         <div class="stat"><b id="sDone">0</b><span>교환 완료</span></div>
       </div>
       <div class="bar">
-        <input id="q" type="search" placeholder="성함 또는 교환권 번호로 찾기" autocomplete="off">
+        <input id="q" type="search" placeholder="성함으로 찾기" autocomplete="off">
         <button class="btn ghost" type="button" id="refresh">새로고침</button>
       </div>
       <p class="err" id="appErr" role="alert"></p>
@@ -112,9 +112,9 @@ input{width:100%;height:48px;border:1px solid var(--olive);border-radius:6px;bac
   function render(){
     const q=$('q').value.trim().replace(/^no\.?\s*/i,'');
     const att=rows.filter(r=>r.attending);
-    $('sAttend').textContent=att.length+'건';
-    $('sPeople').textContent=att.reduce((s,r)=>s+(r.party_size||0),0)+'명';
-    $('sDone').textContent=att.filter(r=>r.redeemed_at).length+'건';
+    $('sAttend').textContent=att.length+'명';
+    $('sPeople').textContent=att.filter(r=>!r.redeemed_at).length+'명';
+    $('sDone').textContent=att.filter(r=>r.redeemed_at).length+'명';
     const shown=rows.filter(r=>!q||r.name.includes(q)||r.code===q)
       .sort((a,b)=>(b.attending-a.attending)||a.name.localeCompare(b.name,'ko'));
     const list=$('list'); list.textContent='';
@@ -124,7 +124,7 @@ input{width:100%;height:48px;border:1px solid var(--olive);border-radius:6px;bac
       const who=document.createElement('div');who.className='who';
       const b=document.createElement('b');b.textContent=r.name;
       const m=document.createElement('div');m.className='meta';
-      m.textContent=r.attending?`No. ${r.code} · ${r.party_size}명`+(r.redeemed_at?` · ${new Date(r.redeemed_at).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})} 교환`:''):'불참 응답';
+      m.textContent=r.attending?(new Date(r.created_at).toLocaleDateString('ko-KR',{month:'numeric',day:'numeric'})+' 신청'+(r.party_size?` · ${r.party_size}명`:'')+(r.redeemed_at?` · ${new Date(r.redeemed_at).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})} 교환`:'')):'불참 응답';
       who.append(b,m);row.appendChild(who);
       if(r.attending){
         const t=document.createElement('button');t.type='button';t.className='toggle';
