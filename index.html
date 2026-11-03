@@ -89,6 +89,7 @@ form{width:100%;display:flex;flex-direction:column;gap:20px}
     .then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.json()})
     .then(function(code){
       save({name:name,code:String(code),at:Date.now()});
+      nameEl.blur();
       location.href='coupon.html';
     })
     .catch(function(){

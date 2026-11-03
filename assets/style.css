@@ -15,7 +15,7 @@
   color-scheme:light;
 }
 *{box-sizing:border-box}
-html{scroll-snap-type:y proximity;scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:500;font-size:18px;line-height:1.6;word-break:keep-all;
   padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(16px + env(safe-area-inset-bottom,0px));
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -30,7 +30,7 @@ img{max-width:100%}
   box-shadow:inset 0 0 0 9px var(--card),inset 0 0 0 10px var(--line);
   min-height:calc(100vh - 32px);min-height:calc(100svh - 32px);
   padding:44px 30px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center;
-  scroll-snap-align:start;scroll-margin-top:16px}
+  scroll-margin-top:16px}
 .card.first{min-height:calc(100vh - 76px);min-height:calc(100svh - 76px)}
 .card::after{content:"";position:absolute;inset:14px;pointer-events:none;border:1px solid var(--accent);opacity:.5;
   -webkit-mask:linear-gradient(#000 0 0) top left/22px 22px no-repeat,linear-gradient(#000 0 0) top right/22px 22px no-repeat,linear-gradient(#000 0 0) bottom left/22px 22px no-repeat,linear-gradient(#000 0 0) bottom right/22px 22px no-repeat;

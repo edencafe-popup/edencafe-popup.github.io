@@ -75,6 +75,12 @@
 <script>
 (function(){
   var KEY='popup-rsvp-v2';
+  if('scrollRestoration' in history)history.scrollRestoration='manual';
+  function toTop(){if(!location.hash)window.scrollTo(0,0)}
+  toTop();
+  document.addEventListener('DOMContentLoaded',toTop);
+  window.addEventListener('load',toTop);
+  window.addEventListener('pageshow',toTop);
   function load(){try{return JSON.parse(localStorage.getItem(KEY)||sessionStorage.getItem(KEY))}catch(e){return null}}
   var saved=load();
   if(!saved||!saved.name){location.replace('./#rsvp');return}
